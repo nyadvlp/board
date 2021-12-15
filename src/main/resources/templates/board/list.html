@@ -3,14 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>list</title>
+    <link rel="stylesheet" th:href="@{/css/board.css}">
 </head>
 <body>
 <!-- HEADER -->
 <div th:insert="common/header.html" id="header"></div>
 
+<!-- 본문 -->
 <a th:href="@{/post}">글쓰기</a> <br/><br/>
+<table>
+    <thead>
+    <tr>
+        <th class="one wide">번호</th>
+        <th class="ten wide">글제목</th>
+        <th class="two wide">작성자</th>
+        <th class="three wide">작성일</th>
+        <th class="three wide">수정일</th>
+    </tr>
+    </thead>
 
-<a th:href="@{/test(name=banya)}">파라미터 보내기 테스트</a> <br/><br/>
+    <tbody>
+    <!-- CONTENTS !-->
+    <tr th:each="board : ${boardList}">
+        <td>
+            <span th:text="${board.id}"></span>
+        </td>
+        <td>
+            <a th:href="@{'/post/' + ${board.id}}">
+                <span th:text="${board.title}"></span>
+            </a>
+        </td>
+        <td>
+            <span th:text="${board.writer}"></span>
+        </td>
+        <td>
+            <span th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+        </td>
+        <td>
+            <span th:text="${#temporals.format(board.modifiedDate, 'yyyy-MM-dd HH:mm')}"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 <!-- FOOTER -->
 <div th:insert="common/footer.html" id="footer"></div>

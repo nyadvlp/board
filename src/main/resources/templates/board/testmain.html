@@ -8,7 +8,12 @@
 <!-- HEADER -->
 <div th:insert="common/header.html" id="header"></div>
 
-<span th:text="${yourname}">값을 받아오지 못하면 이 텍스트가 나옴</span>
+<!-- param test -->
+<a th:href="@{/paramtest(name=banya)}">파라미터 보내기</a> <br/><br/>
+
+<!-- form test -->
+<a th:href="@{/formtest}">폼 테스트하기</a> <br/><br/>
+<br/><br/>
 
 <!-- FOOTER -->
 <div th:insert="common/footer.html" id="footer"></div>
