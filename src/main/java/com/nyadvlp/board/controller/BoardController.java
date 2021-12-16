@@ -6,9 +6,7 @@ import com.nyadvlp.board.service.BoardService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.Normalizer;
 import java.util.List;
@@ -19,6 +17,7 @@ public class BoardController {
 
     private BoardService boardService;
 
+    // 글목록
     @GetMapping("/")
     public String list(Model model) {
         System.out.println("list");
@@ -28,12 +27,14 @@ public class BoardController {
         return "board/list.html";
     }
 
+    // 글작성을 위한 뷰
     @GetMapping("/post")
     public String write() {
         System.out.println("GET - write");
         return "board/write.html";
     }
 
+    // 글 작성하여 저장
     @PostMapping ("/post")
     public String write(BoardDto boardDto) {
         System.out.println("POST - write");
@@ -41,6 +42,37 @@ public class BoardController {
         return "redirect:/";
     }
 
+    // 글 상세조회
+    @GetMapping("/post/{no}")
+    public String detail(@PathVariable("no") Long no, Model model) {
+        BoardDto boardDto = boardService.getPost(no);
+        model.addAttribute("boardDto", boardDto);
+        return "board/detail.html";
+    }
+
+    // 글 삭제
+    @DeleteMapping("/post/{no}")
+    public String delete(@PathVariable("no") Long no) {
+        boardService.deletePost(no);
+        return "redirect:/";
+    }
+
+    // 글 수정을 위한 뷰
+    @GetMapping("/post/edit/{no}")
+    public String edit(@PathVariable("no") Long no, Model model) {
+        BoardDto boardDto = boardService.getPost(no);
+        model.addAttribute("boardDto", boardDto);
+        return "board/update.html";
+    }
+
+    // 글 수정하여 저장
+    @PutMapping("/post/edit/{no}")
+    public String update(BoardDto boardDto, Model model) {
+        boardService.savePost(boardDto);
+        boardDto = boardService.getPost(boardDto.getId());
+        model.addAttribute("boardDto", boardDto);
+        return "board/detail.html";
+    }
 
 
     // test
