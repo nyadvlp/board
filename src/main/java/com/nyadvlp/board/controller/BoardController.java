@@ -45,6 +45,7 @@ public class BoardController {
     // 글 상세조회
     @GetMapping("/post/{no}")
     public String detail(@PathVariable("no") Long no, Model model) {
+        System.out.println("Get - detail");
         BoardDto boardDto = boardService.getPost(no);
         model.addAttribute("boardDto", boardDto);
         return "board/detail.html";
@@ -53,6 +54,7 @@ public class BoardController {
     // 글 삭제
     @DeleteMapping("/post/{no}")
     public String delete(@PathVariable("no") Long no) {
+        System.out.println("Delete - delete");
         boardService.deletePost(no);
         return "redirect:/";
     }
@@ -60,6 +62,7 @@ public class BoardController {
     // 글 수정을 위한 뷰
     @GetMapping("/post/edit/{no}")
     public String edit(@PathVariable("no") Long no, Model model) {
+        System.out.println("Get - edit");
         BoardDto boardDto = boardService.getPost(no);
         model.addAttribute("boardDto", boardDto);
         return "board/update.html";
@@ -68,10 +71,21 @@ public class BoardController {
     // 글 수정하여 저장
     @PutMapping("/post/edit/{no}")
     public String update(BoardDto boardDto, Model model) {
+        System.out.println("Put - update");
         boardService.savePost(boardDto);
         boardDto = boardService.getPost(boardDto.getId());
         model.addAttribute("boardDto", boardDto);
         return "board/detail.html";
+    }
+
+    // 글 검색 기능
+    @GetMapping("/board/search")
+    public String search(@RequestParam(value="keyword") String keyword, Model model) {
+        System.out.println("Get - search");
+        List<BoardDto> boardDtoList = boardService.searchPosts(keyword);
+        System.out.println("boardDtoList count : " + boardDtoList.size());
+        model.addAttribute("boardList", boardDtoList);
+        return "board/list.html";
     }
 
 
