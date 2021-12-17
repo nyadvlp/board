@@ -56,18 +56,25 @@ public class BoardService {
         Double postsTotalCount = Double.valueOf(this.getBoardCount());
 
         // 총 게시글 기준으로 계산한 마지막 페이지 번호 계산 (올림으로 계산)
+        // 글이 3개면 1페이지, 8개면 2페이지, 9개면 3페이지, ...
         Integer totalLastPageNum = (int)(Math.ceil((postsTotalCount/PAGE_POST_COUNT)));
 
+        // 블럭 번호 세팅
+        Integer blockStartPageNum = (curPageNum <= BLOCK_PAGE_NUM_COUNT / 2)
+                ? 1
+                : curPageNum - BLOCK_PAGE_NUM_COUNT / 2;
+
         // 현재 페이지를 기준으로 블럭의 마지막 페이지 번호 계산
-        Integer blockLastPageNum = (totalLastPageNum > curPageNum + BLOCK_PAGE_NUM_COUNT)
-                ? curPageNum + BLOCK_PAGE_NUM_COUNT
-                : totalLastPageNum;
+        Integer blockLastPageNum =
+                (totalLastPageNum > blockStartPageNum + BLOCK_PAGE_NUM_COUNT - 1 )
+                        ? blockStartPageNum + BLOCK_PAGE_NUM_COUNT - 1
+                        : totalLastPageNum;
 
         // 페이지 시작 번호 조정
         curPageNum = (curPageNum <= 3) ? 1 : curPageNum - 2;
 
         // 페이지 번호 할당
-        for (int val = curPageNum, idx = 0; val <= blockLastPageNum; val++, idx++) {
+        for (int val = blockStartPageNum, idx = 0; val <= blockLastPageNum; val++, idx++) {
             pageList[idx] = val;
         }
 
