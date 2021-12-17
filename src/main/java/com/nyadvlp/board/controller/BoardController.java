@@ -19,25 +19,29 @@ public class BoardController {
 
     // 글목록
     @GetMapping("/")
-    public String list(Model model) {
-        System.out.println("list");
+    public String list(Model model, @RequestParam(value="page", defaultValue = "1") Integer pageNum) {
+        System.out.println("Get - list");
 
-        List<BoardDto> boardList = boardService.getBoardList();
+        List<BoardDto> boardList = boardService.getBoardList(pageNum);
+        Integer[] pageList = boardService.getPageList(pageNum);
+
         model.addAttribute("boardList", boardList);
+        model.addAttribute("pageList", pageList);
+
         return "board/list.html";
     }
 
     // 글작성을 위한 뷰
     @GetMapping("/post")
     public String write() {
-        System.out.println("GET - write");
+        System.out.println("Get - write");
         return "board/write.html";
     }
 
     // 글 작성하여 저장
     @PostMapping ("/post")
     public String write(BoardDto boardDto) {
-        System.out.println("POST - write");
+        System.out.println("Post - write");
         boardService.savePost(boardDto);
         return "redirect:/";
     }
