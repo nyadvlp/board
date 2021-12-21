@@ -31,11 +31,20 @@ public class BoardService {
 
     @Transactional
     public List<BoardDto> getBoardList(Integer pageNum) {
-        Page<BoardEntity> page = boardRepository.findAll(PageRequest.of(pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "createdDate")));
+        // pageNum이 전달되면 해당 페이지로, 전달되지 않으면 default값인 1로 넘어옴 (컨트롤러의 defaultValue = "1" 부분)
+
+        Page<BoardEntity> page = boardRepository
+                .findAll(PageRequest.of
+                        (pageNum - 1, PAGE_POST_COUNT, Sort.by(Sort.Direction.DESC, "createdDate")));
+                        // 첫번째 인자 : page - 몇 페이지?
+                        // 두번째 인자 : size(offset) - 몇 개 가져올 것인가 (5개)
+                        // 세번째 인자 : sort - 정렬방식
         // Pageable 인터페이스를 구현한 클래스를 전달하면 페이징을 할 수 있음
 
         List<BoardEntity> boardEntities = page.getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
+        
+        // Page로 Entity 꺼내고 -> getContent로 Entity 또 꺼내고 -> DtoList에 담음
 
         for (BoardEntity boardEntity : boardEntities) {
             boardDtoList.add(this.convertEntityToDto(boardEntity));
@@ -49,6 +58,7 @@ public class BoardService {
         return boardRepository.count(); // 전체 게시글 수
     }
 
+    // 노출할 페이지 번호 블럭
     public Integer[] getPageList(Integer curPageNum) {
         Integer[] pageList = new Integer[BLOCK_PAGE_NUM_COUNT];
 
@@ -56,7 +66,7 @@ public class BoardService {
         Double postsTotalCount = Double.valueOf(this.getBoardCount());
 
         // 총 게시글 기준으로 계산한 마지막 페이지 번호 계산 (올림으로 계산)
-        // 글이 3개면 1페이지, 8개면 2페이지, 9개면 3페이지, ...
+        // 글이 3개면 1페이지, 9개면 3페이지, 100개면 20페이지
         Integer totalLastPageNum = (int)(Math.ceil((postsTotalCount/PAGE_POST_COUNT)));
 
         // 블럭 번호 세팅
@@ -70,7 +80,7 @@ public class BoardService {
                         ? blockStartPageNum + BLOCK_PAGE_NUM_COUNT - 1
                         : totalLastPageNum;
 
-        // 페이지 시작 번호 조정
+        // 페이지 가운데 숫자 조정
         curPageNum = (curPageNum <= 3) ? 1 : curPageNum - 2;
 
         // 페이지 번호 할당
